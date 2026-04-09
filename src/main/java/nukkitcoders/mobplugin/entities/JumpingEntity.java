@@ -139,7 +139,7 @@ public abstract class JumpingEntity extends BaseEntity {
                     }
                 }
                 if ((this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff));
+                    this.setBothYaw(Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
                 return this.followTarget;
             }
@@ -165,7 +165,7 @@ public abstract class JumpingEntity extends BaseEntity {
                     }
                 }
                 if ((this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff));
+                    this.setBothYaw(Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
             }
 

@@ -133,6 +133,8 @@ public class Zombie extends WalkingMonster implements EntityAgeable, EntitySmite
             } else if (this.armor[0].getId() == 0) {
                 this.setOnFire(100);
             }
+        } else if(this.isInsideOfWater()) {
+            this.fireTicks = 1;
         }
 
         return hasUpdate;

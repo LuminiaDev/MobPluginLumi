@@ -107,7 +107,7 @@ public abstract class FlyingEntity extends BaseEntity {
                     this.motionZ = this.getSpeed() * 0.15 * (z / diff);
                 }
                 if ((this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = (FastMathLite.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
+                    this.setBothYaw(FastMathLite.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
                 return this.followTarget;
             }
@@ -130,7 +130,7 @@ public abstract class FlyingEntity extends BaseEntity {
                     this.motionZ = this.getSpeed() * 0.15 * (z / diff);
                 }
                 if ((this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = (FastMathLite.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
+                    this.setBothYaw(FastMathLite.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
             }
 

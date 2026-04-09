@@ -125,6 +125,8 @@ public class Skeleton extends WalkingMonster implements EntitySmite {
 
         if (!this.closed && MobPlugin.shouldMobBurn(level, this)) {
             this.setOnFire(100);
+        } else if(this.isInsideOfWater()) {
+            this.fireTicks = 1;
         }
 
         return hasUpdate;

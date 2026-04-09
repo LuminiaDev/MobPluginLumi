@@ -196,7 +196,7 @@ public abstract class WalkingEntity extends BaseEntity {
                     }
                 }
                 if ((this.passengers.isEmpty() || this instanceof Llama || this instanceof Pig) && (this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff));
+                    this.setBothYaw(Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
             }
 
@@ -231,7 +231,7 @@ public abstract class WalkingEntity extends BaseEntity {
                     }
                 }
                 if (!distance && (this.passengers.isEmpty() || this instanceof Llama || this instanceof Pig) && (this.stayTime <= 0 || Utils.rand()) && diff != 0) {
-                    this.yaw = Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff));
+                    this.setBothYaw(Math.toDegrees(-FastMathLite.atan2(x / diff, z / diff)));
                 }
             }
 
