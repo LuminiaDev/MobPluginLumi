@@ -1,0 +1,183 @@
+package nukkitcoders.mobplugin.entities.monster.walking;
+
+import cn.nukkit.Player;
+import cn.nukkit.block.Block;
+import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.EntitySmite;
+import cn.nukkit.entity.data.LongEntityData;
+import cn.nukkit.entity.effect.Effect;
+import cn.nukkit.entity.effect.EffectType;
+import cn.nukkit.entity.projectile.EntityArrow;
+import cn.nukkit.entity.projectile.EntityProjectile;
+import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
+import cn.nukkit.event.entity.EntityShootBowEvent;
+import cn.nukkit.event.entity.ProjectileLaunchEvent;
+import cn.nukkit.item.Item;
+import cn.nukkit.item.ItemBow;
+import cn.nukkit.item.ItemNamespaceId;
+import cn.nukkit.level.Location;
+import cn.nukkit.level.Sound;
+import cn.nukkit.level.format.FullChunk;
+import cn.nukkit.math.Vector2;
+import cn.nukkit.nbt.tag.CompoundTag;
+import cn.nukkit.network.protocol.MobEquipmentPacket;
+import nukkitcoders.mobplugin.MobPlugin;
+import nukkitcoders.mobplugin.entities.monster.WalkingMonster;
+import nukkitcoders.mobplugin.utils.FastMathLite;
+import nukkitcoders.mobplugin.utils.Utils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class Stray extends WalkingMonster implements EntitySmite {
+
+    public static final int NETWORK_ID = 46;
+
+    private boolean angryFlagSet;
+
+    public Stray(FullChunk chunk, CompoundTag nbt) {
+        super(chunk, nbt);
+    }
+
+    @Override
+    public void initEntity() {
+        this.setMaxHealth(20);
+        super.initEntity();
+    }
+
+    @Override
+    public int getNetworkId() {
+        return NETWORK_ID;
+    }
+
+    @Override
+    public float getWidth() {
+        return 0.6f;
+    }
+
+    @Override
+    public float getHeight() {
+        return 1.99f;
+    }
+
+    @Override
+    public void spawnTo(Player player) {
+        super.spawnTo(player);
+
+        MobEquipmentPacket pk = new MobEquipmentPacket();
+        pk.eid = this.getId();
+        pk.item = new ItemBow();
+        pk.hotbarSlot = 0;
+        player.dataPacket(pk);
+    }
+
+    @Override
+    public boolean entityBaseTick(int tickDiff) {
+        if (getServer().getDifficulty().getId() == 0) {
+            this.close();
+            return true;
+        }
+
+        boolean hasUpdate  = super.entityBaseTick(tickDiff);
+
+        if (!this.closed && MobPlugin.shouldMobBurn(level, this)) {
+            this.setOnFire(100);
+        }
+
+        return hasUpdate;
+    }
+
+    public void attackEntity(Entity player) {
+        if (this.attackDelay > 23 && Utils.rand(1, 32) < 4 && this.distanceSquared(player) <= 55) {
+            this.attackDelay = 0;
+
+            double f = 1.3;
+            double yaw = this.yaw;
+            double pitch = this.pitch;
+            double yawR = FastMathLite.toRadians(yaw);
+            double pitchR = FastMathLite.toRadians(pitch);
+            Location pos = new Location(this.x - Math.sin(yawR) * Math.cos(pitchR) * 0.5, this.y + this.getHeight() - 0.18,
+                    this.z + Math.cos(yawR) * Math.cos(pitchR) * 0.5, yaw, pitch, this.level);
+
+            if (this.getLevel().getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()) == Block.AIR) {
+                EntityArrow arrow = new EntityArrow(pos.getChunk(), EntityArrow.getDefaultNBT(pos), this);
+                arrow.addEffect(Effect.get(EffectType.SLOWNESS));
+                setProjectileMotion(arrow, pitch, yawR, pitchR, f);
+
+                EntityShootBowEvent ev = new EntityShootBowEvent(this, Item.get(Item.ARROW, 0, 1), arrow, f);
+                this.server.getPluginManager().callEvent(ev);
+
+                EntityProjectile projectile = ev.getProjectile();
+                if (ev.isCancelled()) {
+                    if (this.stayTime > 0 || this.distance(this.target) <= ((this.getWidth()) / 2 + 0.05) * nearbyDistanceMultiplier()) {
+                        projectile.close();
+                    }
+                } else {
+                    ProjectileLaunchEvent launch = new ProjectileLaunchEvent(projectile);
+                    this.server.getPluginManager().callEvent(launch);
+                    if (launch.isCancelled()) {
+                        if (this.stayTime > 0 || this.distance(this.target) <= ((this.getWidth()) / 2 + 0.05) * nearbyDistanceMultiplier()) {
+                            projectile.close();
+                        }
+                    } else {
+                        projectile.spawnToAll();
+                        ((EntityArrow) projectile).setPickupMode(EntityArrow.PICKUP_NONE);
+                        this.level.addSound(this, Sound.RANDOM_BOW);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public Item[] getDrops() {
+        List<Item> drops = new ArrayList<>();
+
+        drops.add(Item.get(ItemNamespaceId.BONE, 0, Utils.rand(0, 2)));
+        drops.add(Item.get(Item.ARROW, 0, Utils.rand(0, 2)));
+
+        if (Utils.rand()) {
+            drops.add(Item.get(Item.ARROW, 18, 1));
+        }
+
+        return drops.toArray(new Item[0]);
+    }
+
+    @Override
+    public int getKillExperience() {
+        return 5;
+    }
+
+    @Override
+    public int nearbyDistanceMultiplier() {
+        return 10;
+    }
+
+    @Override
+    public boolean targetOption(EntityCreature creature, double distance) {
+        boolean hasTarget = super.targetOption(creature, distance);
+        if (hasTarget) {
+            if (!this.angryFlagSet && creature != null) {
+                this.setDataProperty(new LongEntityData(DATA_TARGET_EID, creature.getId()));
+                this.angryFlagSet = true;
+            }
+        } else {
+            if (this.angryFlagSet) {
+                this.setDataProperty(new LongEntityData(DATA_TARGET_EID, 0));
+                this.angryFlagSet = false;
+                this.stayTime = 100;
+            }
+        }
+        return hasTarget;
+    }
+
+    @Override
+    public void kill() {
+        if (!this.isAlive()) {
+            return;
+        }
+
+        super.kill();
+    }
+}

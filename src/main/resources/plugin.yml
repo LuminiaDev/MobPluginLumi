@@ -1,0 +1,7 @@
+name: "${project.name}"
+main: nukkitcoders.mobplugin.MobPlugin
+version: "${project.version}"
+api: ["1.0.14"]
+author: Koshak_Mine, kniffo80, matt404, augesrob, PetteriM1, PikyCZ, zzz1999, SergeyDertan
+description: Add mobs and animals with AI & spawning
+load: STARTUP
