@@ -4,6 +4,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.registry.Registries;
+import nukkitcoders.mobplugin.spawner.EntitySpawnerTask;
 import nukkitcoders.mobplugin.entities.BaseEntity;
 import nukkitcoders.mobplugin.entities.animal.flying.Allay;
 import nukkitcoders.mobplugin.entities.animal.flying.Bat;
@@ -19,13 +20,12 @@ import nukkitcoders.mobplugin.entities.monster.jumping.Slime;
 import nukkitcoders.mobplugin.entities.monster.swimming.ElderGuardian;
 import nukkitcoders.mobplugin.entities.monster.swimming.Guardian;
 import nukkitcoders.mobplugin.entities.monster.walking.*;
-import nukkitcoders.mobplugin.entities.projectile.*;
-import nukkitcoders.mobplugin.utils.Utils;
 
 public class MobPlugin extends PluginBase implements Listener {
 
     private static MobPlugin INSTANCE;
     public Config config;
+    private EntitySpawnerTask spawnerTask;
 
     public MobPlugin() {
         INSTANCE = this;
@@ -45,6 +45,9 @@ public class MobPlugin extends PluginBase implements Listener {
 
         this.registerEntities();
         this.getServer().getPluginManager().registerEvents(new EventListener(), this);
+        spawnerTask = new EntitySpawnerTask();
+        int spawnerTicks = Math.max(getServer().getSettings().world().entity().ticksPerEntitySpawns(), 2) >> 1; // Run the spawner on 2x speed but spawn only either monsters or animals
+        getServer().getScheduler().scheduleDelayedRepeatingTask(this, this.spawnerTask, spawnerTicks, spawnerTicks);
     }
 
     @Override
@@ -132,15 +135,6 @@ public class MobPlugin extends PluginBase implements Listener {
         Registries.ENTITY.register(Zoglin.class.getSimpleName(), Zoglin.class);
         Registries.ENTITY.register(PiglinBrute.class.getSimpleName(), PiglinBrute.class);
         Registries.ENTITY.register(Warden.class.getSimpleName(), Warden.class);
-
-        Registries.ENTITY.register("BlueWitherSkull", EntityBlueWitherSkull.class);
-        Registries.ENTITY.register("BlazeFireBall", EntityBlazeFireBall.class);
-        Registries.ENTITY.register("GhastFireBall", EntityGhastFireBall.class);
-        Registries.ENTITY.register("ShulkerBullet", EntityShulkerBullet.class);
-        Registries.ENTITY.register("EnderCharge", EntityEnderCharge.class);
-        Registries.ENTITY.register("WitherSkull", EntityWitherSkull.class);
-        Registries.ENTITY.register("LlamaSpit", EntityLlamaSpit.class);
-        Registries.ENTITY.register("ThrownTrident", DespawnableThrownTrident.class);
     }
 
     public static boolean shouldMobBurn(Level level, BaseEntity entity) {
