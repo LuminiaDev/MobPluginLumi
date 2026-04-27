@@ -4,6 +4,8 @@ import cn.nukkit.Player;
 import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
+import cn.nukkit.entity.data.ByteEntityData;
+import cn.nukkit.entity.projectile.EntityGhastFireBall;
 import cn.nukkit.event.entity.EntityDamageByChildEntityEvent;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
@@ -16,7 +18,6 @@ import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import cn.nukkit.network.protocol.LevelEventPacket;
 import nukkitcoders.mobplugin.entities.monster.FlyingMonster;
-import nukkitcoders.mobplugin.entities.projectile.EntityGhastFireBall;
 import nukkitcoders.mobplugin.utils.FastMathLite;
 import nukkitcoders.mobplugin.utils.Utils;
 
@@ -79,6 +80,8 @@ public class Ghast extends FlyingMonster {
                 return;
             }
             if (this.attackDelay == 50) {
+                this.setDataProperty(new ByteEntityData(DATA_CHARGE_AMOUNT, 0x1));
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_CHARGED, true);
                 this.level.addLevelEvent(this, LevelEventPacket.EVENT_SOUND_GHAST);
             }
             if (this.attackDelay > 60) {
@@ -93,6 +96,15 @@ public class Ghast extends FlyingMonster {
                 if (this.getLevel().getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()) != Block.AIR) {
                     return;
                 }
+
+                for (Block block : this.getLineOfSight(28, 28)) {
+                    if (!block.canPassThrough()) {
+                        return;
+                    }
+                }
+
+                this.setDataProperty(new ByteEntityData(DATA_CHARGE_AMOUNT, 0x0));
+                this.setDataFlag(DATA_FLAGS, DATA_FLAG_CHARGED, false);
 
                 EntityGhastFireBall fireball = (EntityGhastFireBall) Entity.createEntity("GhastFireBall", pos, this);
                 fireball.setExplode(true);

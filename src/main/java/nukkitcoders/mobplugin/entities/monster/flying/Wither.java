@@ -5,6 +5,8 @@ import cn.nukkit.block.Block;
 import cn.nukkit.blockentity.BlockEntity;
 import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.IntEntityData;
+import cn.nukkit.entity.projectile.EntityBlueWitherSkull;
+import cn.nukkit.entity.projectile.EntityWitherSkull;
 import cn.nukkit.event.entity.EntityDamageByEntityEvent;
 import cn.nukkit.event.entity.EntityDamageEvent;
 import cn.nukkit.event.entity.EntityExplosionPrimeEvent;
@@ -23,8 +25,6 @@ import cn.nukkit.network.protocol.DataPacket;
 import nukkitcoders.mobplugin.MobPlugin;
 import nukkitcoders.mobplugin.entities.Boss;
 import nukkitcoders.mobplugin.entities.monster.FlyingMonster;
-import nukkitcoders.mobplugin.entities.projectile.EntityBlueWitherSkull;
-import nukkitcoders.mobplugin.entities.projectile.EntityWitherSkull;
 import nukkitcoders.mobplugin.utils.FastMathLite;
 import nukkitcoders.mobplugin.utils.Utils;
 

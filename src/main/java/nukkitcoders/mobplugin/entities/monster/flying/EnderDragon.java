@@ -5,6 +5,7 @@ import cn.nukkit.entity.Attribute;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.item.EntityEndCrystal;
+import cn.nukkit.entity.projectile.EntityEnderCharge;
 import cn.nukkit.event.entity.ProjectileLaunchEvent;
 import cn.nukkit.item.Item;
 import cn.nukkit.level.Location;
@@ -17,7 +18,6 @@ import cn.nukkit.network.protocol.DataPacket;
 import nukkitcoders.mobplugin.MobPlugin;
 import nukkitcoders.mobplugin.entities.Boss;
 import nukkitcoders.mobplugin.entities.monster.FlyingMonster;
-import nukkitcoders.mobplugin.entities.projectile.EntityEnderCharge;
 import nukkitcoders.mobplugin.utils.Utils;
 
 public class EnderDragon extends FlyingMonster implements Boss {
