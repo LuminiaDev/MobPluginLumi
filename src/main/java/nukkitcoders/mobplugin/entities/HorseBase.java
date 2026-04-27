@@ -25,7 +25,7 @@ import java.util.Objects;
 /**
  * @author PetteriM1
  */
-public class HorseBase extends WalkingAnimal implements EntityRideable {
+public class HorseBase extends WalkingAnimal implements EntityRideable, EntityControllable {
 
     private boolean saddled;
 
@@ -127,6 +127,7 @@ public class HorseBase extends WalkingAnimal implements EntityRideable {
         return super.onUpdate(currentTick);
     }
 
+    @Override
     public void onPlayerInput(Player player, double strafe, double forward) {
         this.stayTime = 0;
         this.moveTime = 10;
@@ -142,7 +143,7 @@ public class HorseBase extends WalkingAnimal implements EntityRideable {
         double f = strafe * strafe + forward * forward;
         double friction = 0.6;
 
-        this.yaw = player.yaw;
+        setBothYaw(player.yaw);
 
         if (f >= 1.0E-4) {
             f = Math.sqrt(f);

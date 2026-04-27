@@ -3,6 +3,7 @@ package nukkitcoders.mobplugin.entities.animal.walking;
 import cn.nukkit.Player;
 import cn.nukkit.block.BlockID;
 import cn.nukkit.entity.Entity;
+import cn.nukkit.entity.EntityControllable;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityRideable;
 import cn.nukkit.entity.data.FloatEntityData;
@@ -24,7 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 
-public class Strider extends WalkingAnimal implements EntityRideable {
+public class Strider extends WalkingAnimal implements EntityRideable, EntityControllable {
 
     public final static int NETWORK_ID = 125;
 
@@ -130,13 +131,14 @@ public class Strider extends WalkingAnimal implements EntityRideable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SADDLED, saddled);
     }
 
+    @Override
     public void onPlayerInput(Player player, double strafe, double forward) {
         if (player.getInventory().getItemInHand().getId() == Item.WARPED_FUNGUS_ON_A_STICK) {
             this.stayTime = 0;
             this.moveTime = 10;
             this.route = null;
             this.target = null;
-            this.yaw = player.yaw;
+            setBothYaw(player.yaw);
 
             strafe *= 0.4;
 

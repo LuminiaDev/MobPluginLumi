@@ -2,10 +2,7 @@ package nukkitcoders.mobplugin.entities.animal.walking;
 
 import cn.nukkit.Player;
 import cn.nukkit.Server;
-import cn.nukkit.entity.Attribute;
-import cn.nukkit.entity.Entity;
-import cn.nukkit.entity.EntityCreature;
-import cn.nukkit.entity.EntityRideable;
+import cn.nukkit.entity.*;
 import cn.nukkit.entity.data.FloatEntityData;
 import cn.nukkit.entity.data.Vector3fEntityData;
 import cn.nukkit.entity.mob.EntityZombiePigman;
@@ -28,7 +25,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-public class Pig extends WalkingAnimal implements EntityRideable {
+public class Pig extends WalkingAnimal implements EntityRideable, EntityControllable {
 
     public static final int NETWORK_ID = 12;
 
@@ -189,13 +186,14 @@ public class Pig extends WalkingAnimal implements EntityRideable {
         this.setDataFlag(DATA_FLAGS, DATA_FLAG_SADDLED, saddled);
     }
 
+    @Override
     public void onPlayerInput(Player player, double strafe, double forward) {
         if (player.getInventory().getItemInHand().getId() == Item.CARROT_ON_A_STICK) {
             this.stayTime = 0;
             this.moveTime = 10;
             this.route = null;
             this.target = null;
-            this.yaw = player.yaw;
+            setBothYaw(player.yaw);
 
             strafe *= 0.4;
 
