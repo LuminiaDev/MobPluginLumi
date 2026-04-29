@@ -19,9 +19,9 @@ public class Slime extends JumpingMonster {
 
     public static final int SIZE_SMALL = 1;
     public static final int SIZE_MEDIUM = 2;
-    public static final int SIZE_BIG = 3;
+    public static final int SIZE_BIG = 4;
 
-    protected int size;
+    protected int size = 0;
 
     public Slime(FullChunk chunk, CompoundTag nbt) {
         super(chunk, nbt);
@@ -43,16 +43,12 @@ public class Slime extends JumpingMonster {
     }
 
     @Override
-    public float getLength() {
-        return 0.51f + size * 0.51f;
-    }
-
-    @Override
     protected void initEntity() {
         if (this.namedTag.contains("Size")) {
             this.size = this.namedTag.getInt("Size");
         } else {
-            this.size = Utils.rand(1, 3);
+            int[] variants = new int[]{1, 2, 4};
+            this.size = variants[Utils.rand(1, 2)];
         }
 
         if (size == SIZE_BIG) {
@@ -65,7 +61,7 @@ public class Slime extends JumpingMonster {
 
         super.initEntity();
 
-        this.setScale(0.51f + size * 0.51f);
+        this.setScale(size);
 
         if (size == SIZE_BIG) {
             this.setDamage(new float[] { 0, 3, 4, 6 });
@@ -74,6 +70,8 @@ public class Slime extends JumpingMonster {
         } else {
             this.setDamage(new float[] { 0, 0, 0, 0 });
         }
+
+        this.recalculateBoundingBox();
     }
 
     @Override

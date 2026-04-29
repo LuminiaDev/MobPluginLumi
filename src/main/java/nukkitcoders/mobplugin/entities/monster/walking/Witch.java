@@ -17,6 +17,7 @@ import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.nbt.tag.CompoundTag;
 import nukkitcoders.mobplugin.entities.monster.WalkingMonster;
+import nukkitcoders.mobplugin.utils.FastMathLite;
 import nukkitcoders.mobplugin.utils.Utils;
 
 import java.util.ArrayList;
@@ -68,44 +69,52 @@ public class Witch extends WalkingMonster {
 
     @Override
     public void attackEntity(Entity player) {
-        //TODO: Port from just current Lumi version
-        /*if (this.attackDelay > 60 && Utils.rand(1, 3) == 2 && this.distanceSquared(player) <= 60) {
+        if (this.attackDelay > 60 && Utils.rand(1, 3) == 2 && this.distanceSquared(player) <= 60) {
             this.attackDelay = 0;
             if (player.isAlive() && !player.closed) {
+                for (Block block : this.getLineOfSight(7, 7)) {
+                    if (!block.canPassThrough()) {
+                        return;
+                    }
+                }
 
                 double f = 1;
                 double yaw = this.yaw + Utils.rand(-4.0, 4.0);
-                Location pos = new Location(this.x - Math.sin(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5, this.y + this.getEyeHeight(),
-                        this.z + Math.cos(Math.toRadians(yaw)) * Math.cos(Math.toRadians(pitch)) * 0.5, yaw, pitch, this.level);
+                double yawR = FastMathLite.toRadians(yaw);
+                double pitchR = FastMathLite.toRadians(pitch);
+                Location pos = new Location(this.x - Math.sin(yawR) * Math.cos(pitchR) * 0.5, this.y + this.getEyeHeight(),
+                        this.z + Math.cos(yawR) * Math.cos(pitchR) * 0.5, yaw, pitch, this.level);
+
                 if (this.getLevel().getBlockIdAt(pos.getFloorX(), pos.getFloorY(), pos.getFloorZ()) != Block.AIR) {
                     return;
                 }
+
                 EntityPotionSplash thrownPotion = (EntityPotionSplash) Entity.createEntity("ThrownPotion", pos, this);
 
                 double distance = this.distanceSquared(player);
 
                 if (!player.hasEffect(EffectType.SLOWNESS) && distance <= 64) {
-                    thrownPotion.potionId = PotionType.SLOWNESS;
+                    thrownPotion.potionId = PotionType.SLOWNESS.id();
                 } else if (player.getHealth() >= 8) {
-                    thrownPotion.potionId = Potion.POISON;
-                } else if (!player.hasEffect(Effect.WEAKNESS) && Utils.rand(0, 4) == 0 && distance <= 9) {
-                    thrownPotion.potionId = Potion.WEAKNESS;
+                    thrownPotion.potionId = PotionType.POISON.id();
+                } else if (!player.hasEffect(EffectType.WEAKNESS) && Utils.rand(0, 4) == 0 && distance <= 9) {
+                    thrownPotion.potionId = PotionType.WEAKNESS.id();
                 } else {
-                    thrownPotion.potionId = Potion.HARMING;
+                    thrownPotion.potionId = PotionType.HARMING.id();
                 }
 
-                thrownPotion.setMotion(new Vector3(-Math.sin(Math.toDegrees(yaw)) * Math.cos(Math.toDegrees(pitch)) * f * f, -Math.sin(Math.toDegrees(pitch)) * f * f,
-                        Math.cos(Math.toDegrees(yaw)) * Math.cos(Math.toDegrees(pitch)) * f * f));
+                thrownPotion.setMotion(new Vector3(-Math.sin(yawR) * Math.cos(pitchR) * f * f, -Math.sin(pitchR) * f * f,
+                        Math.cos(yawR) * Math.cos(pitchR) * f * f));
                 ProjectileLaunchEvent launch = new ProjectileLaunchEvent(thrownPotion);
                 this.server.getPluginManager().callEvent(launch);
                 if (launch.isCancelled()) {
                     thrownPotion.close();
                 } else {
                     thrownPotion.spawnToAll();
-                    this.level.addSound(this, Sound.MOB_WITCH_THROW);
+                    this.level.addSoundToViewers(this, Sound.MOB_WITCH_THROW);
                 }
             }
-        }*/
+        }
     }
 
 

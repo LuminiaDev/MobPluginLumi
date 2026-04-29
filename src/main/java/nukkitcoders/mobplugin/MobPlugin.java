@@ -44,7 +44,7 @@ public class MobPlugin extends PluginBase implements Listener {
         }
 
         this.registerEntities();
-        this.getServer().getPluginManager().registerEvents(new EventListener(), this);
+        new EventListener(this);
         spawnerTask = new EntitySpawnerTask();
         int spawnerTicks = Math.max(getServer().getSettings().world().entity().ticksPerEntitySpawns(), 2) >> 1; // Run the spawner on 2x speed but spawn only either monsters or animals
         getServer().getScheduler().scheduleDelayedRepeatingTask(this, this.spawnerTask, spawnerTicks, spawnerTicks);
@@ -84,8 +84,8 @@ public class MobPlugin extends PluginBase implements Listener {
         Registries.ENTITY.register(Squid.class.getSimpleName(), Squid.class);
         Registries.ENTITY.register(TropicalFish.class.getSimpleName(), TropicalFish.class);
         Registries.ENTITY.register(Turtle.class.getSimpleName(), Turtle.class);
-        Registries.ENTITY.register("VillagerV1", Villager.class);
-        Registries.ENTITY.register("Villager", VillagerV2.class);
+        //Registries.ENTITY.register("VillagerV1", Villager.class);
+        //Registries.ENTITY.register("Villager", VillagerV2.class);
         Registries.ENTITY.register(ZombieHorse.class.getSimpleName(), ZombieHorse.class);
         Registries.ENTITY.register(WanderingTrader.class.getSimpleName(), WanderingTrader.class);
         Registries.ENTITY.register(Strider.class.getSimpleName(), Strider.class);

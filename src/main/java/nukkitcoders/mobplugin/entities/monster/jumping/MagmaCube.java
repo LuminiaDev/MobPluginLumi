@@ -19,7 +19,7 @@ public class MagmaCube extends JumpingMonster {
 
     public static final int SIZE_SMALL = 1;
     public static final int SIZE_MEDIUM = 2;
-    public static final int SIZE_BIG = 3;
+    public static final int SIZE_BIG = 4;
 
     protected int size;
 
@@ -77,6 +77,8 @@ public class MagmaCube extends JumpingMonster {
         } else {
             this.setDamage(new float[] { 0, 0, 0, 0 });
         }
+
+        recalculateBoundingBox();
     }
 
     @Override

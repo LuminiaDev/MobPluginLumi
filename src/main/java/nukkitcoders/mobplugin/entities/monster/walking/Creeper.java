@@ -1,6 +1,7 @@
 package nukkitcoders.mobplugin.entities.monster.walking;
 
 import cn.nukkit.Player;
+import cn.nukkit.block.Block;
 import cn.nukkit.entity.Entity;
 import cn.nukkit.entity.EntityCreature;
 import cn.nukkit.entity.EntityExplosive;
@@ -126,10 +127,11 @@ public class Creeper extends WalkingMonster implements EntityExplosive {
         this.entityBaseTick(tickDiff);
 
         Vector3 target = this.updateMove(tickDiff);
+
         if (target != null) {
             double distance = target.distanceSquared(this);
-            if (distance <= 16) { // 4 blocks
-                if (target instanceof EntityCreature) {
+            if (distance <= 16 && target instanceof EntityCreature creature) {
+                if (this.hasLineOfSight(creature)) {
                     if (this.explodeTimer <= 0) {
                         if (bombTime == 0) {
                             this.getLevel().addLevelEvent(this, LevelEventPacket.EVENT_SOUND_TNT);
@@ -144,6 +146,9 @@ public class Creeper extends WalkingMonster implements EntityExplosive {
                     if (distance <= 1) {
                         this.stayTime = 10;
                     }
+                } else {
+                    this.setDataFlag(DATA_FLAGS, DATA_FLAG_IGNITED, false);
+                    this.bombTime = 0;
                 }
             } else {
                 if (this.explodeTimer <= 0) {
@@ -152,6 +157,27 @@ public class Creeper extends WalkingMonster implements EntityExplosive {
                 }
             }
         }
+
+        return true;
+    }
+
+    public boolean hasLineOfSight(Entity target) {
+        Vector3 start = this.add(0, this.getHeight() / 2, 0);
+        Vector3 end = target.add(0, target.getHeight() / 2, 0);
+
+        Vector3 diff = end.subtract(start);
+        double distance = diff.length();
+        Vector3 step = diff.normalize().multiply(0.2);
+
+        Vector3 current = start.clone();
+        for (double traveled = 0; traveled < distance; traveled += 0.2) {
+            Block block = this.level.getBlock(current);
+            if (!block.isTransparent()) {
+                return false;
+            }
+            current = current.add(step);
+        }
+
         return true;
     }
 
