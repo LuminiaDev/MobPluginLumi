@@ -82,8 +82,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
     private boolean friendly;
     private int knockBackTime;
     private short inLoveTicks;
-    //private int inEndPortal;
-    //private int inNetherPortal;
     private short inLoveCooldown;
 
     public BaseEntity(FullChunk chunk, CompoundTag nbt) {
@@ -282,52 +280,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
     }
 
     @Override
-    protected void checkBlockCollision() {
-        //boolean netherPortal = false;
-        //boolean endPortal = false;
-
-        for (Block block : this.getCollisionBlocks()) {
-            /*if (block.getId() == Block.NETHER_PORTAL) {
-                netherPortal = true;
-                continue;
-            } else if (block.getId() == Block.END_PORTAL) {
-                endPortal = true;
-                continue;
-            }*/
-
-            block.onEntityCollide(this);
-        }
-
-        /*if (endPortal) {
-            inEndPortal++;
-        } else {
-            inEndPortal = 0;
-        }
-
-        if (inEndPortal == 1) {
-            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, EntityPortalEnterEvent.PortalType.END);
-            this.getServer().getPluginManager().callEvent(ev);
-            if (!ev.isCancelled()) {
-                //TODO
-            }
-        }
-
-        if (netherPortal) {
-            inNetherPortal++;
-        } else {
-            inNetherPortal = 0;
-        }
-
-        if (inNetherPortal == 80) {
-            EntityPortalEnterEvent ev = new EntityPortalEnterEvent(this, EntityPortalEnterEvent.PortalType.NETHER);
-            this.getServer().getPluginManager().callEvent(ev);
-            if (!ev.isCancelled()) {
-                //TODO
-            }
-        }*/
-    }
-
-    @Override
     public boolean attack(EntityDamageEvent source) {
         if (this.isKnockback() && source instanceof EntityDamageByEntityEvent && ((EntityDamageByEntityEvent) source).getDamager() instanceof Player) {
             return false;
@@ -345,45 +297,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
 
         this.target = null;
         this.stayTime = 0;
-        return true;
-    }
-
-    @Override
-    public boolean move(double dx, double dy, double dz) {
-        if (dy < -10 || dy > 10) {
-            return false;
-        }
-
-        if (dx == 0 && dz == 0 && dy == 0) {
-            return false;
-        }
-
-        double movX = dx * moveMultiplier;
-        double movY = dy;
-        double movZ = dz * moveMultiplier;
-
-        AxisAlignedBB[] list = this.level.getCollisionCubes(this, this.boundingBox.addCoord(dx, dy, dz), false);
-        for (AxisAlignedBB bb : list) {
-            dx = bb.calculateXOffset(this.boundingBox, dx);
-        }
-        this.boundingBox.offset(dx, 0, 0);
-
-        for (AxisAlignedBB bb : list) {
-            dz = bb.calculateZOffset(this.boundingBox, dz);
-        }
-        this.boundingBox.offset(0, 0, dz);
-
-        for (AxisAlignedBB bb : list) {
-            dy = bb.calculateYOffset(this.boundingBox, dy);
-        }
-        this.boundingBox.offset(0, dy, 0);
-
-        this.setComponents(this.x + dx, this.y + dy, this.z + dz);
-        this.checkChunks();
-
-        this.checkGroundState(movX, movY, movZ, dx, dy, dz);
-        this.updateFallState(this.onGround);
-
         return true;
     }
 
@@ -679,45 +592,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
         this.airTicks = ticks;
     }
 
-    @Override
-    public void addMovement(double x, double y, double z, double yaw, double pitch, double headYaw) {
-        MoveEntityAbsolutePacket pk = new MoveEntityAbsolutePacket();
-        pk.eid = this.id;
-        pk.x = (float) x;
-        pk.y = (float) y;
-        pk.z = (float) z;
-        pk.yaw = (float) yaw;
-        pk.headYaw = (float) headYaw;
-        pk.pitch = (float) pitch;
-        pk.onGround = this.onGround;
-        for (Player p : this.hasSpawned.values()) {
-            p.dataPacket(pk);
-        }
-    }
-
-    @Override
-    public void addMotion(double motionX, double motionY, double motionZ) {
-        SetEntityMotionPacket pk = new SetEntityMotionPacket();
-        pk.eid = this.id;
-        pk.motionX = (float) motionX;
-        pk.motionY = (float) motionY;
-        pk.motionZ = (float) motionZ;
-        for (Player p : this.hasSpawned.values()) {
-            p.dataPacket(pk);
-        }
-    }
-
-    @Override
-    protected void checkGroundState(double movX, double movY, double movZ, double dx, double dy, double dz) {
-        if (onGround && movX == 0 && movY == 0 && movZ == 0 && dx == 0 && dy == 0 && dz == 0) {
-            return;
-        }
-        this.isCollidedVertically = movY != dy;
-        this.isCollidedHorizontally = (movX != dx || movZ != dz);
-        this.isCollided = (this.isCollidedHorizontally || this.isCollidedVertically);
-        this.onGround = (movY != dy && movY < 0);
-    }
-
     public static void setProjectileMotion(Entity projectile, double pitch, double yawR, double pitchR, double speed) {
         double verticalMultiplier = Math.cos(pitchR);
         double x = verticalMultiplier * Math.sin(-yawR);
@@ -736,22 +610,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
         projectile.setMotion(new Vector3(x, y, z));
     }
 
-    @Override
-    public void resetFallDistance() {
-        this.highestPosition = this.y;
-    }
-
-    @Override
-    public boolean setMotion(Vector3 motion) {
-        this.motionX = motion.x;
-        this.motionY = motion.y;
-        this.motionZ = motion.z;
-        if (!this.justCreated) {
-            this.updateMovement();
-        }
-        return true;
-    }
-
     public boolean canTarget(Entity entity) {
         return entity instanceof Player;
     }
@@ -768,18 +626,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
             return true; // onInteract: true = decrease count
         }
 
-        return false;
-    }
-
-    @Override
-    public boolean setDataProperty(EntityData data, boolean send) {
-        if (!Objects.equals(data, this.dataProperties.get(data.getId()))) {
-            this.dataProperties.put(data);
-            if (send && (data.getId() != DATA_HEALTH || this instanceof EntityRideable || this instanceof Boss)) {
-                this.sendData(this.hasSpawned.values().toArray(new Player[0]), this.dataProperties);
-            }
-            return true;
-        }
         return false;
     }
 
@@ -805,32 +651,6 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
         pk.eid = this.getId();
         pk.event = EntityEventPacket.ARM_SWING;
         Server.broadcastPacket(this.getViewers().values(), pk);
-    }
-
-    @Override
-    public void fall(float fallDistance) {
-        if (fallDistance > 0.75) {
-            if (!this.hasEffect(EffectType.SLOW_FALLING)) {
-                Block down = this.level.getBlock(this.down());
-                if (!this.noFallDamage) {
-                    float damage = (float) Math.floor(fallDistance - 3 - (this.hasEffect(EffectType.JUMP_BOOST) ? this.getEffect(EffectType.JUMP_BOOST).getAmplifier() + 1 : 0));
-                    if (down.getId() == BlockID.HAY_BALE) {
-                        damage -= (damage * 0.8f);
-                    }
-                    if (damage > 0) {
-                        this.attack(new EntityDamageEvent(this, EntityDamageEvent.DamageCause.FALL, damage));
-                    }
-                }
-                if (down.getId() == BlockID.FARMLAND) {
-                    Event ev = new EntityInteractEvent(this, down);
-                    this.server.getPluginManager().callEvent(ev);
-                    if (ev.isCancelled()) {
-                        return;
-                    }
-                    this.level.setBlock(down, Block.get(BlockID.DIRT), false, true);
-                }
-            }
-        }
     }
 
     /**
@@ -898,12 +718,5 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
             }
         }
         return false;
-    }
-
-    @Override
-    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
-        super.knockBack(attacker, damage, x, z, base);
-
-        this.knockBackTime = 10;
     }
 }
