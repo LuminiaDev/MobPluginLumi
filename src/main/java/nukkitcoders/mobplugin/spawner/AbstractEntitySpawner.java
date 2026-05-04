@@ -9,6 +9,7 @@ import cn.nukkit.level.Level;
 import cn.nukkit.level.Position;
 import cn.nukkit.level.format.FullChunk;
 import cn.nukkit.utils.Utils;
+import nukkitcoders.mobplugin.MobPlugin;
 import nukkitcoders.mobplugin.entities.animal.walking.Strider;
 import nukkitcoders.mobplugin.entities.monster.flying.Phantom;
 
@@ -119,7 +120,10 @@ public abstract class AbstractEntitySpawner implements EntitySpawner {
         if (player.isSpectator()) {
             return false;
         }
-        if (!player.getLevel().isMobSpawningAllowed() || Utils.rand(1, 4) == 1) {
+        Level level = player.getLevel();
+        if (!level.isMobSpawningAllowed()
+                || MobPlugin.getInstance().config.mobSpawningDisabledWorlds.contains(level.getName())
+                || Utils.rand(1, 4) == 1) {
             return false;
         }
         if (Server.getInstance().getDifficulty() == Difficulty.PEACEFUL) {

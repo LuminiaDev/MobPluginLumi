@@ -179,11 +179,7 @@ public class Wolf extends TameableMonster {
                     this.setCollarColor(DyeColor.RED);
                     this.setRoute(null);
 
-                    if (MobPlugin.getInstance().config.noXpOrbs) {
-                        player.addExperience(Utils.rand(1, 7));
-                    } else {
-                        this.getLevel().dropExpOrb(this, Utils.rand(1, 7));
-                    }
+                    this.getLevel().dropExpOrb(this, Utils.rand(1, 7));
                     return true;
                 } else {
                     EntityEventPacket packet = new EntityEventPacket();

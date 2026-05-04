@@ -46,7 +46,7 @@ public class MobPlugin extends PluginBase implements Listener {
         this.registerEntities();
         new EventListener(this);
         spawnerTask = new EntitySpawnerTask();
-        int spawnerTicks = Math.max(getServer().getSettings().world().entity().ticksPerEntitySpawns(), 2) >> 1; // Run the spawner on 2x speed but spawn only either monsters or animals
+        int spawnerTicks = Math.max(config.spawnDelay, 2) >> 1; // Run the spawner on 2x speed but spawn only either monsters or animals
         getServer().getScheduler().scheduleDelayedRepeatingTask(this, this.spawnerTask, spawnerTicks, spawnerTicks);
     }
 

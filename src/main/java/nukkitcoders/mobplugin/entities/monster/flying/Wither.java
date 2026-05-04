@@ -266,9 +266,6 @@ public class Wither extends FlyingMonster implements Boss, EntitySmite {
     @Override
     public void spawnTo(Player player) {
         super.spawnTo(player);
-        if (!MobPlugin.getInstance().config.showBossBar) {
-            return;
-        }
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.bossEid = this.id;
         pkBoss.type = BossEventPacket.TYPE_SHOW;

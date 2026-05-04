@@ -52,10 +52,6 @@ public class EventListener {
 
         //EntityDamageByEntityEvent
         plugin.getServer().getPluginManager().subscribeEvent(EntityDamageByEntityEvent.class, ev -> {
-            if (!MobPlugin.getInstance().config.checkTamedEntityAttack) {
-                return;
-            }
-
             if (ev.getEntity() instanceof Player) {
                 for (Entity entity : ev.getEntity().getLevel().getNearbyEntities(ev.getEntity().getBoundingBox().grow(17, 17, 17), ev.getEntity())) {
                     if (entity instanceof Wolf) {
@@ -132,11 +128,7 @@ public class EventListener {
         }
         int killExperience = baseEntity.getKillExperience();
         if (killExperience > 0) {
-            if (MobPlugin.getInstance().config.noXpOrbs) {
-                ((Player) damager).addExperience(killExperience);
-            } else {
-                damager.getLevel().dropExpOrb(baseEntity, killExperience);
-            }
+            damager.getLevel().dropExpOrb(baseEntity, killExperience);
         }
     }
 

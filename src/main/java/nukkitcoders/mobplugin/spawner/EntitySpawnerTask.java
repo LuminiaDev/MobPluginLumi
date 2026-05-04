@@ -12,6 +12,7 @@ import cn.nukkit.level.Position;
 import cn.nukkit.level.format.generic.BaseFullChunk;
 import cn.nukkit.math.Vector3;
 import cn.nukkit.utils.Utils;
+import nukkitcoders.mobplugin.MobPlugin;
 import nukkitcoders.mobplugin.entities.BaseEntity;
 import nukkitcoders.mobplugin.entities.animal.swimming.Cod;
 import nukkitcoders.mobplugin.entities.animal.swimming.Salmon;
@@ -167,17 +168,19 @@ public class EntitySpawnerTask implements Runnable {
 
     @Override
     public void run() {
+        MobPlugin plugin = MobPlugin.getInstance();
+
         if (Server.getInstance().getOnlinePlayersCount() != 0) {
             if (mobsNext) {
                 mobsNext = false;
-                if (Server.getInstance().getSettings().world().entity().spawnMobs()) {
+                if (plugin.config.spawnMobs) {
                     for (EntitySpawner spawner : mobSpawners.values()) {
                         spawner.spawn();
                     }
                 }
             } else {
                 mobsNext = true;
-                if (Server.getInstance().getSettings().world().entity().spawnAnimals()) {
+                if (plugin.config.spawnAnimals) {
                     for (EntitySpawner spawner : animalSpawners.values()) {
                         spawner.spawn();
                     }

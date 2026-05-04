@@ -230,13 +230,8 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
     @Override
     public boolean entityBaseTick(int tickDiff) {
         if (this.canDespawn()) {
-            if (MobPlugin.getInstance().config.killOnDespawn) {
-                this.kill();
-                return true;
-            } else {
-                this.close();
-                return false;
-            }
+            this.close();
+            return false;
         }
 
         boolean hasUpdate = super.entityBaseTick(tickDiff);
@@ -263,12 +258,11 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
                 for (int i = 0; i < 3; i++) {
                     this.level.addParticle(new HeartParticle(this.add(Utils.rand(-1.0, 1.0), this.getMountedYOffset() + Utils.rand(-1.0, 1.0), Utils.rand(-1.0, 1.0))));
                 }
-                if (MobPlugin.getInstance().config.allowBreeding) {
-                    Entity[] colliding = level.getCollidingEntities(this.boundingBox.grow(0.5f, 0.5f, 0.5f));
-                    for (Entity entity : colliding) {
-                        if (entity != this && entity != null && this.tryBreedWih(entity)) {
-                            break;
-                        }
+
+                Entity[] colliding = level.getCollidingEntities(this.boundingBox.grow(0.5f, 0.5f, 0.5f));
+                for (Entity entity : colliding) {
+                    if (entity != this && entity != null && this.tryBreedWih(entity)) {
+                        break;
                     }
                 }
             }
@@ -682,9 +676,7 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
                 BaseEntity baby = (BaseEntity) Entity.createEntity(this.getNetworkId(), this);
                 baby.setBaby(true);
                 baby.spawnToAll();
-                if (!MobPlugin.getInstance().config.noXpOrbs) {
-                    this.level.dropExpOrb(this, Utils.rand(1, 7));
-                }
+                this.level.dropExpOrb(this, Utils.rand(1, 7));
                 return true;
             }
         }

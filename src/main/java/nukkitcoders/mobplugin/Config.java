@@ -8,16 +8,9 @@ public class Config {
 
     public int spawnDelay;
     public int despawnTicks;
-    public int spawnNoSpawningArea;
-    public int endEndermanSpawnRate;
-    public boolean noXpOrbs;
-    public boolean killOnDespawn;
-    public boolean checkTamedEntityAttack;
-    public boolean creeperExplodeBlocks;
-    public boolean allowBreeding;
-    public boolean showBossBar;
+    public boolean spawnMobs;
+    public boolean spawnAnimals;
     public Set<String> mobSpawningDisabledWorlds;
-    public Set<String> mobCreationDisabledWorlds;
 
     Config(MobPlugin plugin) {
         plugin.saveDefaultConfig();
@@ -26,20 +19,12 @@ public class Config {
 
     boolean init(MobPlugin plugin) {
         //entities
-        spawnDelay = pluginConfig.getInt("entities.autospawn-ticks") >> 1; // The task runs double the speed but spawns only either monsters or animals
-        despawnTicks = pluginConfig.getInt("entities.despawn-ticks");
-        mobSpawningDisabledWorlds = loadStringListAsSet("entities.worlds-spawning-disabled");
+        spawnDelay = pluginConfig.getInt("autospawn-ticks") >> 1; // The task runs double the speed but spawns only either monsters or animals
+        despawnTicks = pluginConfig.getInt("despawn-ticks");
+        spawnMobs = pluginConfig.getBoolean("spawn-mobs");
+        spawnAnimals = pluginConfig.getBoolean("spawn-animals");
+        mobSpawningDisabledWorlds = loadStringListAsSet("worlds-spawning-disabled");
 
-        //other
-        noXpOrbs = pluginConfig.getBoolean("other.use-no-xp-orbs");
-        spawnNoSpawningArea = pluginConfig.getInt("other.spawn-no-spawning-area");
-        killOnDespawn = pluginConfig.getBoolean("other.kill-mobs-on-despawn");
-        endEndermanSpawnRate = pluginConfig.getInt("other.end-enderman-spawning");
-        checkTamedEntityAttack = pluginConfig.getBoolean("other.check-tamed-entity-attack");
-        creeperExplodeBlocks = pluginConfig.getBoolean("other.creeper-explode-blocks");
-        mobCreationDisabledWorlds = loadStringListAsSet("other.worlds-entity-creation-disabled");
-        allowBreeding = pluginConfig.getBoolean("other.allow-breeding");
-        showBossBar = pluginConfig.getBoolean("other.show-boss-bar");
         return true;
     }
 

@@ -55,11 +55,9 @@ public class EnderDragon extends FlyingMonster implements Boss {
 
     @Override
     public int getKillExperience() {
-        if (!MobPlugin.getInstance().config.noXpOrbs) {
-            for (int i = 0; i < 167; ) {
-                this.level.dropExpOrb(this, 3);
-                i++;
-            }
+        for (int i = 0; i < 167; ) {
+            this.level.dropExpOrb(this, 3);
+            i++;
         }
         return 0;
     }
@@ -143,9 +141,6 @@ public class EnderDragon extends FlyingMonster implements Boss {
     @Override
     public void spawnTo(Player player) {
         super.spawnTo(player);
-        if (!MobPlugin.getInstance().config.showBossBar) {
-            return;
-        }
         BossEventPacket pkBoss = new BossEventPacket();
         pkBoss.bossEid = this.id;
         pkBoss.type = BossEventPacket.TYPE_SHOW;

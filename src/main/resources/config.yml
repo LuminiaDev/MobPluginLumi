@@ -1,34 +1,5 @@
-entities:
-  # How often the spawn task should run
-  # In ticks, 20 ticks = 1 second
-  # Use 0 to disable entity spawning
-  autospawn-ticks: 200
-  # How often the despawn task should run
-  # In ticks, 20 ticks = 1 second
-  # Use 0 to disable entity despawning
-  despawn-ticks: 12000
-  # Do not spawn entities in these worlds
-  worlds-spawning-disabled: "exampleworld1, exampleworld2"
-
-other:
-  # Give xp drops straight to player
-  use-no-xp-orbs: false
-  # Do not spawn mobs this near to spawn area
-  # Set -1 to disable
-  spawn-no-spawning-area: -1
-  # Kill entities instead of despawning them
-  # This can have a negative impact on performance due to the drops
-  kill-mobs-on-despawn: false
-  # Custom enderman max spawns rule for the_end world
-  end-enderman-spawning: 10
-  # If tamed entity owner attacked or attack entity, it will become angry
-  check-tamed-entity-attack: true
-  # Let creepers explode blocks
-  creeper-explode-blocks: true
-  # Do not allow creating snow golems, iron golems and withers in these worlds
-  worlds-entity-creation-disabled: "exampleworld1, exampleworld2"
-  # Allow players to breed mobs
-  allow-breeding: true
-  # Show boss bar for wither & ender dragon (work in progress)
-  show-boss-bar: true
-
+autospawn-ticks: 200
+despawn-ticks: 12000
+spawn-mobs: true
+spawn-animals: true
+worlds-spawning-disabled: "exampleworld1, exampleworld2"
