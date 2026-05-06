@@ -711,4 +711,11 @@ public abstract class BaseEntity extends EntityCreature implements EntityAgeable
         }
         return false;
     }
+
+    @Override
+    public void knockBack(Entity attacker, double damage, double x, double z, double base) {
+        super.knockBack(attacker, damage, x, z, base);
+
+        this.knockBackTime = 10;
+    }
 }
