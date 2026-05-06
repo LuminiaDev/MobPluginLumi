@@ -4,6 +4,7 @@ import cn.nukkit.event.Listener;
 import cn.nukkit.level.Level;
 import cn.nukkit.plugin.PluginBase;
 import cn.nukkit.registry.Registries;
+import nukkitcoders.mobplugin.dispenser.DispenserBehaviorRegistry;
 import nukkitcoders.mobplugin.spawner.EntitySpawnerTask;
 import nukkitcoders.mobplugin.entities.BaseEntity;
 import nukkitcoders.mobplugin.entities.animal.flying.Allay;
@@ -26,6 +27,7 @@ public class MobPlugin extends PluginBase implements Listener {
     private static MobPlugin INSTANCE;
     public Config config;
     private EntitySpawnerTask spawnerTask;
+    public DispenserBehaviorRegistry dispenserBehaviorRegistry;
 
     public MobPlugin() {
         INSTANCE = this;
@@ -43,6 +45,7 @@ public class MobPlugin extends PluginBase implements Listener {
             return;
         }
 
+        this.dispenserBehaviorRegistry = new DispenserBehaviorRegistry();
         this.registerEntities();
         new EventListener(this);
         spawnerTask = new EntitySpawnerTask();
