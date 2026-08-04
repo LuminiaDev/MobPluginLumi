@@ -56,7 +56,7 @@ public class Dolphin extends SwimmingAnimal {
     public boolean targetOption(EntityCreature creature, double distance) {
         if (creature instanceof Player) {
             Player player = (Player) creature;
-            return player.spawned && player.isAlive() && !player.closed && (player.getInventory().getItemInHand().getId() == Item.RAW_FISH || player.getInventory().getItemInHand().getId() == Item.RAW_SALMON) && distance <= 49;
+            return player.spawned && player.isAlive() && !player.closed && player.getInventory() != null && player.getInventory().getItemInHand() != null && (player.getInventory().getItemInHand().getId() == Item.RAW_FISH || player.getInventory().getItemInHand().getId() == Item.RAW_SALMON) && distance <= 49;
         }
         return false;
     }

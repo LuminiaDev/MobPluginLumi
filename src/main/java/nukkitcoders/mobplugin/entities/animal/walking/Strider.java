@@ -168,7 +168,8 @@ public class Strider extends WalkingAnimal implements EntityRideable, EntityCont
 
     @Override
     protected void checkTarget() {
-        if (this.passengers.isEmpty() || !(this.getPassengers().get(0) instanceof Player) || ((Player) this.getPassengers().get(0)).getInventory().getItemInHand().getId() != Item.WARPED_FUNGUS_ON_A_STICK) {
+        Player rider = !this.passengers.isEmpty() && this.getPassengers().get(0) instanceof Player ? (Player) this.getPassengers().get(0) : null;
+        if (rider == null || rider.getInventory() == null || rider.getInventory().getItemInHand() == null || rider.getInventory().getItemInHand().getId() != Item.WARPED_FUNGUS_ON_A_STICK) {
             super.checkTarget();
         }
     }

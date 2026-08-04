@@ -70,7 +70,7 @@ public class Pig extends WalkingAnimal implements EntityRideable, EntityControll
     public boolean targetOption(EntityCreature creature, double distance) {
         if (creature instanceof Player) {
             Player player = (Player) creature;
-            if (player.closed) {
+            if (player.closed || player.getInventory() == null || player.getInventory().getItemInHand() == null) {
                 return false;
             }
             int id = player.getInventory().getItemInHand().getId();
@@ -188,7 +188,7 @@ public class Pig extends WalkingAnimal implements EntityRideable, EntityControll
 
     @Override
     public void onPlayerInput(Player player, double strafe, double forward) {
-        if (player.getInventory().getItemInHand().getId() == Item.CARROT_ON_A_STICK) {
+        if (player.getInventory() != null && player.getInventory().getItemInHand() != null && player.getInventory().getItemInHand().getId() == Item.CARROT_ON_A_STICK) {
             this.stayTime = 0;
             this.moveTime = 10;
             this.route = null;
@@ -223,7 +223,8 @@ public class Pig extends WalkingAnimal implements EntityRideable, EntityControll
 
     @Override
     protected void checkTarget() {
-        if (this.passengers.isEmpty() || !(this.getPassengers().get(0) instanceof Player) || ((Player) this.getPassengers().get(0)).getInventory().getItemInHand().getId() != Item.CARROT_ON_A_STICK) {
+        Player rider = !this.passengers.isEmpty() && this.getPassengers().get(0) instanceof Player ? (Player) this.getPassengers().get(0) : null;
+        if (rider == null || rider.getInventory() == null || rider.getInventory().getItemInHand() == null || rider.getInventory().getItemInHand().getId() != Item.CARROT_ON_A_STICK) {
             super.checkTarget();
         }
     }

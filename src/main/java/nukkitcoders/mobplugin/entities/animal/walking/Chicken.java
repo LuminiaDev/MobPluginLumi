@@ -88,7 +88,7 @@ public class Chicken extends WalkingAnimal {
     public boolean targetOption(EntityCreature creature, double distance) {
         if (creature instanceof Player) {
             Player player = (Player) creature;
-            if (player.closed) {
+            if (player.closed || player.getInventory() == null || player.getInventory().getItemInHand() == null) {
                 return false;
             }
             int id = player.getInventory().getItemInHand().getId();
