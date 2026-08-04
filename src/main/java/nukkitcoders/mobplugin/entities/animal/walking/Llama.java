@@ -150,7 +150,7 @@ public class Llama extends HorseBase {
 
         if (canTarget && (creature instanceof Player)) {
             Player player = (Player) creature;
-            return player.isAlive() && !player.closed && this.isFeedItem(player.getInventory().getItemInHand()) && distance <= 49;
+            return player.isAlive() && !player.closed && player.getInventory() != null && player.getInventory().getItemInHand() != null && this.isFeedItem(player.getInventory().getItemInHand()) && distance <= 49;
         }
 
         return false;

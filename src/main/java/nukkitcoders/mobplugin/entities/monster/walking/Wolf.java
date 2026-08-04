@@ -115,7 +115,8 @@ public class Wolf extends TameableMonster {
         }
         
         if (creature instanceof Player) {
-            if (distance <= 64 && this.isBeggingItem(((Player) creature).getInventory().getItemInHand())) {
+            Player p = (Player) creature;
+            if (distance <= 64 && p.getInventory() != null && p.getInventory().getItemInHand() != null && this.isBeggingItem(p.getInventory().getItemInHand())) {
                 // TODO: Begging
                 if (distance <= 9) {
                     stayTime = 40;
@@ -123,10 +124,9 @@ public class Wolf extends TameableMonster {
                 return true;
             } else if (this.hasOwner() && creature.equals(this.getOwner())) {
                 if (distance <= 4) {
-                    return false;
-                } else if (distance <= 100) {
-                    return true;
+                    stayTime = 40;
                 }
+                return true;
             }
         }
         
@@ -235,7 +235,7 @@ public class Wolf extends TameableMonster {
     @Override
     public void attackEntity(Entity entity) {
         if (entity instanceof Player && (
-            (!this.isAngry() && this.isBeggingItem(((Player) entity).getInventory().getItemInHand())) ||
+            (!this.isAngry() && ((Player) entity).getInventory() != null && ((Player) entity).getInventory().getItemInHand() != null && this.isBeggingItem(((Player) entity).getInventory().getItemInHand())) ||
             (this.hasOwner() && entity.equals(this.getOwner()))
             )
         ) {
@@ -247,10 +247,10 @@ public class Wolf extends TameableMonster {
             HashMap<EntityDamageEvent.DamageModifier, Float> damage = new HashMap<>();
             damage.put(EntityDamageEvent.DamageModifier.BASE, this.getDamage());
 
-            if (entity instanceof Player) {
+            if (entity instanceof Player && ((Player) entity).getInventory() != null) {
                 float points = 0;
                 for (Item i : ((Player) entity).getInventory().getArmorContents()) {
-                    points += this.getArmorPoints(i.getId());
+                    if (i != null) points += this.getArmorPoints(i.getId());
                 }
 
                 damage.put(EntityDamageEvent.DamageModifier.ARMOR,

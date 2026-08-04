@@ -62,7 +62,7 @@ public class Donkey extends HorseBase {
 
         if (canTarget && (creature instanceof Player)) {
             Player player = (Player) creature;
-            return player.spawned && player.isAlive() && !player.closed &&
+            return player.spawned && player.isAlive() && !player.closed && player.getInventory() != null && player.getInventory().getItemInHand() != null &&
                     this.isFeedItem(player.getInventory().getItemInHand()) && distance <= 49;
         }
         return false;
